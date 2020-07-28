@@ -1,0 +1,215 @@
+---
+title: "knit-child_analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{knit-child_analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+# knitr::opts_chunk$set(
+#   collapse = TRUE,
+#   comment = "#>", 
+#   echo = FALSE, 
+#   out.width = "100%"
+# )
+```
+
+```{r}
+library(useval)
+library(tidyverse)
+set.seed(1984)
+```
+
+### Data
+
+```{r}
+# dm <- naive_hf
+(dm_nc <- model_parameters(dm))
+dm0 <- ifelse(dm, FALSE, dm)
+(dm_c <- model_parameters(dm0))
+```
+
+### Config
+
+```{r}
+## Decision model
+marginal_profit <- 50*0.9
+pop_size_user <- 2000
+pop_size_sell <- 10000
+lifetime <- 5
+fixed_cost <- 30000
+marginal_cost <- 800
+cost_c <- 10^6
+cost_nc <- marginal_profit
+seuil <- 0
+sample_size_step <- 5
+sample_size_max <- 60
+sample_size_grid <- seq(0, sample_size_max, sample_size_step)
+n_sim <- 100000
+
+param <- c(
+  `Maximum m (non-critical)` = m_nc_max,
+  `Maximum m (critical)` = m_c_max,
+  `Marginal profit` = marginal_profit,
+  `Number of end-users` = pop_size_user,
+  `Number of buyers` = pop_size_sell,
+  `Lifetime` = lifetime,
+  `Fixed cost` = fixed_cost,
+  `Marginal cost (by device)` = marginal_cost,
+  `Cost of a non-critical problem` = cost_nc,
+  `Cost of a critical problem` = cost_c,
+  `Threshold for critical problem consequences` = seuil,
+  `Step for sample size determination` = sample_size_step,
+  `Max for sample size determination` = sample_size_max,
+  `Number of simulation for the preposterior analysis ` = n_sim
+)
+
+knitr::kable(tibble(Parameters = names(param), Value = param))
+```
+
+### Fit
+
+```{r}
+# Non-critical
+fit_nc <- posterior_analysis(parameters = dm_nc, m_max = m_nc_max, iter = 50000,
+                             seed = 1, control = list(adapt_delta = 0.95))
+# Critical
+fit_c <- posterior_analysis(parameters = dm_c, m_max = m_c_max, iter = 50000,
+                            seed = 1, control = list(adapt_delta = 0.95))
+```
+
+### Diagnostic
+
+#### Non-critical
+
+```{r}
+knitr::kable(as_tibble(round(fit_nc$diagnostic, 3)) %>% group_by(m) %>% 
+               summarize(
+                 acceptance = mean(accept_stat__), 
+                 stepsize = mean(stepsize__),
+                 treedepth = mean(treedepth__),
+                 n_leapfrog = mean(n_leapfrog__),
+                 divergent = mean(divergent__),
+                 energy = mean(energy__)
+               ))
+```
+
+#### Critical
+
+```{r}
+knitr::kable(as_tibble(round(fit_c$diagnostic, 3)) %>% group_by(m) %>% 
+               summarize(
+                 acceptance = mean(accept_stat__), 
+                 stepsize = mean(stepsize__),
+                 treedepth = mean(treedepth__),
+                 n_leapfrog = mean(n_leapfrog__),
+                 divergent = mean(divergent__),
+                 energy = mean(energy__)
+               ))
+```
+
+### Joint posterior distribution
+
+```{r}
+pm <- joint_pm(pd_nc = fit_nc$integrated_likelihood,
+                 pd_c = fit_c$integrated_likelihood)
+
+p <- list()
+
+p[[1]] <- pm %>% filter(m_nc >= dm_nc$j) %>% group_by(m_nc) %>%
+  summarize(Probability = sum(p)) %>%
+  ggplot(aes(x=m_nc, y=Probability, fill=Probability)) +
+  geom_bar(stat="identity") +
+  theme_minimal() +
+  theme(legend.position='none', panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), panel.background = element_blank(),
+        axis.text = element_blank(), axis.title = element_blank()) +
+  scale_fill_gradient(low = "white",high = "darkred", na.value = "grey50",
+                      space = "Lab", guide = "colourbar", aesthetics = "fill")
+
+
+p[[2]] <- pm %>%
+  filter(m_nc >= dm_nc$j) %>%
+  ggplot() + geom_raster(aes(x = m_nc, y = m_c, fill = p)) +
+  theme_minimal() + scale_fill_distiller(direction = 1) + 
+  theme(legend.position='none') +
+  scale_y_continuous(minor_breaks = seq(0 , m_c_max, 1),
+                     breaks = seq(0 , m_c_max, 5)) +
+  scale_x_continuous(minor_breaks = seq(dm_nc$j , m_nc_max, 1),
+                     breaks = seq(dm_nc$j , m_nc_max, 5)) +
+  ylab("Number of critical problems") + 
+  xlab("Number of non-critical problems") + 
+  scale_fill_gradient(low = "white", high = "darkred", na.value = "grey50",
+                      space = "Lab", guide = "colourbar", aesthetics = "fill"
+  )
+
+p[[3]] <- pm %>% filter(m_nc >= dm_nc$j) %>% group_by(m_c) %>%
+  summarize(Probability = sum(p)) %>%
+  ggplot(aes(x=m_c, y=Probability, fill=Probability)) +
+  geom_bar(stat="identity") + coord_flip() +
+  theme_minimal() +
+  theme(legend.position='none', panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), panel.background = element_blank(),
+        axis.text = element_blank(), axis.title = element_blank()) +
+  scale_fill_gradient(low = "white",high = "darkred", na.value = "grey50",
+                      space = "Lab", guide = "colourbar", aesthetics = "fill")
+
+ggpubr::ggarrange(p[[1]], ggplot()+theme_minimal(), p[[2]], p[[3]],
+                  widths = c(1,.2), heights = c(.5,1))
+```
+
+### Preposterior Analysis
+
+```{r}
+res_prepost <- prepost_analysis(fit_nc = fit_nc, fit_c = fit_c, 
+                                n_end_users = pop_size_sell, 
+                                sample_size = sample_size_grid, sim = n_sim)
+```
+
+### End-user discovery
+
+```{r}
+y <- do.call(rbind, lapply(res_prepost$y, function(x){
+  x[,2] <- x[,2] > seuil
+  colMeans(x)
+}))
+```
+
+### Expected loss
+
+```{r}
+el <- y %*% c(ok = 0, c = cost_c, nc = cost_nc)
+
+## Same as
+# el <- do.call(rbind, lapply(res_prepost$y, function(x){
+#   x[,2] <- x[,2] > seuil
+#   mean(x %*% c(ok = 0, c = cost_c, nc = cost_nc))
+#   }))
+```
+
+```{r}
+res_table <- tibble(n = sample_size_grid, el = el[,1]) %>%
+  mutate(evsi = el[1]-el) %>%
+  mutate(delta_evsi = evsi-lag(evsi)) %>%
+  mutate(costs = n*marginal_cost) %>%
+  mutate(delta_costs = costs - lag(costs, default = 0)) %>%
+  mutate(enbs = evsi - costs)
+
+res_table %>% select(n,evsi,costs, enbs) %>% 
+  gather(key = "measure", value = "value", -n) %>%
+  mutate(measure = recode(measure, 
+                          enbs ="Expected Net Benefit of Sampling (ENBS)", 
+                          evsi ="Expected Value of Sample Information (EVSI)", 
+                          costs ="Costs of Sampling")) %>%
+  ggplot() + aes(x = n, y = value, group = measure, color = measure) +
+  geom_line(size =1) +
+  scale_x_continuous(breaks = res_table$n) +
+  xlab("Sample size (n')") + ylab("thousand Euro (K€)") + 
+  labs(color = "Value of Information measure: ") +
+  theme_bw() + theme(legend.position="bottom")
+
+knitr::kable(res_table %>% mutate(max = ifelse(enbs == max(enbs),"**","")))
+```
+
