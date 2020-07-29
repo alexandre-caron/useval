@@ -130,6 +130,40 @@ posterior_pl <- function(stan_fit) {
 }
 
 
+#' @title Extract posterior sample for mu and s2
+#'
+#' @description \code{posterior_mu_s2} extract the posterior sample of mu and s2 from the
+#'   MCMC chains
+#'
+#' @seealso \url{https://mc-stan.org/math/}.
+#'
+#' @param stan_fit A stanfit object.
+#'
+#' @return A numeric scalar.
+#'
+#' @family fitting functions
+#'
+#' @export posterior_mu_s2
+#'
+
+posterior_mu_s2 <- function(stan_fit) {
+
+  fit <- stan_fit$fit
+
+  sample_size <- (fit@sim$warmup+1):fit@sim$iter
+  sample_list <- lapply(fit@sim$samples, function(x) {
+    mu_s2 <- x[1:2]
+    simplify2array(mu_s2)[sample_size,]
+  })
+
+  mu_s2 <- do.call(rbind,sample_list)
+
+  mu_s2
+  #unname(mu_s2)
+}
+
+
+
 #' @title Fit the model and provide posterior sample and integrated likelihood
 #'
 #' @description \code{posterior_analysis} fit the model using \code{fit_model}
