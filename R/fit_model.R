@@ -194,6 +194,7 @@ posterior_analysis <- function(parameters, m_max, ...) {
 
   il <- numeric()
   pl <- list()
+  mu_s2 <- list()
   diagnostic <- list()
 
   if(length(parameters$ms) == 0) {
@@ -209,10 +210,12 @@ posterior_analysis <- function(parameters, m_max, ...) {
     diagnostic[[i+1]] <- fit$diagnostic
     il[i+1] <- integrated_likelihood(fit)
     pl[[i+1]] <- posterior_pl(fit)
+    mu_s2[[i+1]] <- posterior_mu_s2(fit)
   }
 
   list(integrated_likelihood = il,
        posterior_pl = pl,
+       posterior_mu_s2 = mu_s2,
        diagnostic = do.call(rbind, diagnostic))
 
 }
