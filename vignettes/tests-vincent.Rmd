@@ -1,0 +1,29 @@
+---
+title: "tests-vincent"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tests-vincent}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(useval)
+```
+
+
+```{r}
+data("expert_hf")
+param = model_parameters(expert_hf)
+stan_fit = fit_model(param,m = 40) 
+mu_s2 = posterior_mu_s2(stan_fit)
+```
+
+
