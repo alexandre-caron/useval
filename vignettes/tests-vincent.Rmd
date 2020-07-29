@@ -23,7 +23,10 @@ library(useval)
 data("expert_hf")
 param = model_parameters(expert_hf)
 stan_fit = fit_model(param,m = 40) 
-mu_s2 = posterior_mu_s2(stan_fit)
+mu_s2 = posterior_mu_s2(stan_fit) # On recupère mu et s2 pour mettre en oeuvre la stratégie
+temp = posterior_analysis(param, m_max = 40)
+str(temp$posterior_pl)
+str(temp$posterior_mu_s2)
 ```
 
 
