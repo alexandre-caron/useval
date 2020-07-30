@@ -14,6 +14,6 @@ short_pl <- function(posterior_pl, j) {
 }
 
 log_pdf <- function(p, n, mu, s2){
-  prob = -(logit(p) - mu)^2/(2*s2) + (n-1)*log(1-p) - log(p)
+  prob = -(log(p/(1-p)) - mu)^2/(2*s2) + (n-1)*log(1-p) - log(p)
   return(prob)
 }
