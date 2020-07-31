@@ -71,10 +71,10 @@ sample_posterior_pl <- function(nb_sample, n, mu,s2, sampler = "rstan"){
 #'
 #' @description TO DO prepost_pl
 #'
-#' @param m TO DO
-#' @param pl TO DO
-#' @param n TO DO
-#' @param seed TO DO
+#' @param m a vector
+#' @param pl a list
+#' @param n a vector
+#' @param seed a number for the seed, default = NULL
 #'
 #' @return
 #' @export prepost_pl
@@ -91,19 +91,19 @@ prepost_pl <- function(m, pl, mu_s2, n, seed = NULL) {
       id = sample(x = 1:nrow(pl_m), size = 1)
       pl_m_sample <- pl_m[id,]
       mu_s2_sample <- mu_s2_m[id,]
-      undiscovered <- lapply(n, function(x) {
-        rbinom(length(pl_m_sample),x,pl_m_sample)== 0
+      nb_undiscovered <- lapply(n, function(x) {
+        sum(rbinom(length(pl_m_sample),x,pl_m_sample)== 0)
     })
 
-    pl_m_post_undiscovered = lapply(undiscovered, function(x) {
-        if (sum(x)>0) {
-          sample_posterior_pl(nb_sample = sum(x), n = n, mu  = mu_s2_sample[1],
-                             s2= mu_s2_sample[2])
+    pl_m_post_undiscovered = lapply(1:length(n), function(k) {
+        if (nb_undiscovered[k]>0) {
+          sample_posterior_pl(nb_sample = nb_undiscovered[[k]], n = n[k],
+                              mu = mu_s2_sample[1],
+                              s2 = mu_s2_sample[2])
         } else {
           0
         }
       })
-
       unlist(lapply(pl_m_post_undiscovered, function(x) {1 - prod(1-x)}))
     }
   })
