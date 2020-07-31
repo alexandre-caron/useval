@@ -25,3 +25,8 @@ log_pdf <- function(p, n, mu, s2){
 
 
 
+
+
+
+
+

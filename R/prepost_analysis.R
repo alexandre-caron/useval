@@ -17,6 +17,26 @@ sample_pm <- function(joint_pm, size) {
 }
 
 
+#' Title TO DO
+#'
+#' @param n TO DO
+#' @param mu TO DO
+#' @param s2 TO DO
+#'
+#' @return TO DO
+#' @export
+#'
+
+rstan_p <- function(nb_sample, n, mu, s2){
+  fit = rstan::sampling(object = stanmodels$p, chains = 1,
+                        data = list(n=n, mu=mu, s2=s2), refresh = 0,
+                        iter = max(nb_sample + 1000, 2000),
+                        warmup = 1000)
+  logitinv(sample(fit@sim$samples[[1]]$logit_p[1001:max(nb_sample + 1000, 2000)],
+                  nb_sample))
+}
+
+
 #' @title TO DO sample_posterior_pl
 #'
 #' @description TO DO sample_posterior_pl
@@ -28,26 +48,23 @@ sample_pm <- function(joint_pm, size) {
 #' @param metropolis TO DO
 #'
 #' @return
-#' @export sample_pm
+#' @export sample_posterior_pl
 #'
 
-sample_posterior_pl <- function(nb_sample, n, mu,s2, metropolis = FALSE){
-  if (metropolis){
-    # Work for non log-concave pdf : but dependant sample, thus thining to
-    # get independant sample
-    thin = 100
-    temp = arms(thin*nb_sample, log_pdf, lower = 0, upper = 1,
-                arguments = list(n = n, mu  = mu, s2= s2),
-                metropolis = TRUE)
-    temp[thin*(1:nb_sample)]
-  } else {
-    # Otherwise use metropolis = FALSE with just the good number of sample
-    arms(nb_sample, log_pdf, lower = 0, upper = 1,
-         arguments = list(n = n, mu  = mu, s2= s2),
-         metropolis = FALSE)
-  }
+sample_posterior_pl <- function(nb_sample, n, mu,s2, sampler = "rstan"){
+  switch (sampler,
+    armspp = {
+      thin = 100
+      temp = armspp::arms(thin*nb_sample, log_pdf, lower = 0, upper = 1,
+                          arguments = list(n = n, mu  = mu, s2= s2),
+                          metropolis = TRUE)
+      temp[thin*(1:nb_sample)]
+    },
+    rstan = {
+      rstan_p(nb_sample, n, mu, s2)
+    }
+  )
 }
-
 
 
 #' @title TO DO prepost_pl
@@ -173,7 +190,7 @@ prepost_analysis <- function(fit_nc, fit_c, sample_size, n_end_users, sim){
     prepost_pl(m = s_pm$m_c[x], pl = pl_c, mu_s2 = mu_s2_c, n = sample_size)
   })
   # According to the use case replace multinom_sample by multinom_expectation
-  y <- multinom_sample(prepost_pl_nc = res_prepost_nc,
+  y <- multinom_expectation(prepost_pl_nc = res_prepost_nc,
                      prepost_pl_c = res_prepost_c,
                      N = n_end_users)
   return(list(pm = pm, y = y))

@@ -14,7 +14,7 @@ vignette: >
 #   echo = FALSE, 
 #   out.width = "100%"
 # )
-knitr::opts_chunk$set(eval = FALSE)
+knitr::opts_chunk$set(cache = TRUE, eval = FALSE)
 ```
 
 ```{r}
@@ -26,7 +26,9 @@ set.seed(1984)
 ### Data
 
 ```{r}
-# dm <- naive_hf
+m_nc_max <- 50
+m_c_max <- 5
+dm <- naive_hf
 (dm_nc <- model_parameters(dm))
 dm0 <- ifelse(dm, FALSE, dm)
 (dm_c <- model_parameters(dm0))
@@ -45,10 +47,10 @@ marginal_cost <- 800
 cost_c <- 10^6
 cost_nc <- marginal_profit
 seuil <- 0
-sample_size_step <- 5
+sample_size_step <- 10
 sample_size_max <- 60
 sample_size_grid <- seq(0, sample_size_max, sample_size_step)
-n_sim <- 100000
+n_sim <- 1000
 
 param <- c(
   `Maximum m (non-critical)` = m_nc_max,
@@ -167,6 +169,7 @@ ggpubr::ggarrange(p[[1]], ggplot()+theme_minimal(), p[[2]], p[[3]],
 res_prepost <- prepost_analysis(fit_nc = fit_nc, fit_c = fit_c, 
                                 n_end_users = pop_size_sell, 
                                 sample_size = sample_size_grid, sim = n_sim)
+
 ```
 
 ### End-user discovery

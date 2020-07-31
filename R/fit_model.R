@@ -59,9 +59,6 @@ fit_model <- function(parameters, m, ...) {
 }
 
 
-
-
-
 #' @title Compute the integrated likelihood
 #'
 #' @description \code{integrated_likelihood} compute the integrated log
