@@ -17,6 +17,39 @@ sample_pm <- function(joint_pm, size) {
 }
 
 
+#' @title TO DO sample_posterior_pl
+#'
+#' @description TO DO sample_posterior_pl
+#'
+#' @param nb_sample TO DO
+#' @param n TO DO
+#' @param mu TO DO
+#' @param s2 TO DO
+#' @param metropolis TO DO
+#'
+#' @return
+#' @export sample_pm
+#'
+
+sample_posterior_pl <- function(nb_sample, n, mu,s2, metropolis = FALSE){
+  if (metropolis){
+    # Work for non log-concave pdf : but dependant sample, thus thining to
+    # get independant sample
+    thin = 100
+    temp = arms(thin*nb_sample, log_pdf, lower = 0, upper = 1,
+                arguments = list(n = n, mu  = mu, s2= s2),
+                metropolis = TRUE)
+    temp[thin*(1:nb_sample)]
+  } else {
+    # Otherwise use metropolis = FALSE with just the good number of sample
+    arms(nb_sample, log_pdf, lower = 0, upper = 1,
+         arguments = list(n = n, mu  = mu, s2= s2),
+         metropolis = FALSE)
+  }
+}
+
+
+
 #' @title TO DO prepost_pl
 #'
 #' @description TO DO prepost_pl
@@ -43,12 +76,12 @@ prepost_pl <- function(m, pl, mu_s2, n, seed = NULL) {
       mu_s2_sample <- mu_s2_m[id,]
       undiscovered <- lapply(n, function(x) {
         rbinom(length(pl_m_sample),x,pl_m_sample)== 0
-      })
+    })
 
-      pl_m_post_undiscovered = lapply(undiscovered, function(x) {
+    pl_m_post_undiscovered = lapply(undiscovered, function(x) {
         if (sum(x)>0) {
-        arms(sum(x), log_pdf, lower = 0, upper = 1,
-             arguments = list(n = n, mu  = mu_s2_sample[1], s2= mu_s2_sample[1]),metropolis = FALSE)
+          sample_posterior_pl(nb_sample = sum(x), n = n, mu  = mu_s2_sample[1],
+                             s2= mu_s2_sample[2])
         } else {
           0
         }

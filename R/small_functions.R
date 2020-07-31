@@ -5,6 +5,11 @@ logitinv <- function(x) {
   1/(1 + exp(-x))
 }
 
+logit <- function(p){
+  log(p/(1-p))
+}
+
+
 short_pl <- function(posterior_pl, j) {
   lapply(posterior_pl, function(x) {
     if(is.null(x)) return(NULL)
@@ -14,6 +19,9 @@ short_pl <- function(posterior_pl, j) {
 }
 
 log_pdf <- function(p, n, mu, s2){
-  prob = -(log(p/(1-p)) - mu)^2/(2*s2) + (n-1)*log(1-p) - log(p)
-  return(prob)
+  -(logit(p) - mu)^2/(2*s2) + (n-1)*log(1-p) - log(p)
 }
+
+
+
+
