@@ -213,6 +213,7 @@ posterior_analysis <- function(parameters, m_max, ...) {
   list(integrated_likelihood = il,
        posterior_pl = pl,
        posterior_mu_s2 = mu_s2,
-       diagnostic = do.call(rbind, diagnostic))
+       diagnostic = do.call(rbind, diagnostic),
+       n = parameters$n)
 
 }

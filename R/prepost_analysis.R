@@ -80,7 +80,7 @@ sample_posterior_pl <- function(nb_sample, n, mu,s2, sampler = "rstan"){
 #' @export prepost_pl
 #'
 
-prepost_pl <- function(m, pl, mu_s2, n, seed = NULL) {
+prepost_pl <- function(m, pl, mu_s2, n, n_init, seed = NULL) {
   if(!is.null(seed)) set.seed(seed)
   sapply(m, function(x){
     pl_m <- pl[[m+1]]
@@ -96,8 +96,8 @@ prepost_pl <- function(m, pl, mu_s2, n, seed = NULL) {
     })
 
     pl_m_post_undiscovered = lapply(1:length(n), function(k) {
-        if (nb_undiscovered[k]>0) {
-          sample_posterior_pl(nb_sample = nb_undiscovered[[k]], n = n[k],
+        if (nb_undiscovered[[k]]>0) {
+          sample_posterior_pl(nb_sample = nb_undiscovered[[k]], n = n[k] + n_init,
                               mu = mu_s2_sample[1],
                               s2 = mu_s2_sample[2])
         } else {
@@ -184,10 +184,10 @@ prepost_analysis <- function(fit_nc, fit_c, sample_size, n_end_users, sim){
   mu_s2_c <- fit_c$posterior_mu_s2
   s_pm <- sample_pm(pm, sim)
   res_prepost_nc <- sapply(1:length(s_pm$m_nc), function(x){
-    prepost_pl(m = s_pm$m_nc[x], pl = pl_nc, mu_s2 = mu_s2_nc, n = sample_size)
+    prepost_pl(m = s_pm$m_nc[x], pl = pl_nc, mu_s2 = mu_s2_nc, n = sample_size, n_init = fit_nc$n)
   })
   res_prepost_c <- sapply(1:length(s_pm$m_c), function(x){
-    prepost_pl(m = s_pm$m_c[x], pl = pl_c, mu_s2 = mu_s2_c, n = sample_size)
+    prepost_pl(m = s_pm$m_c[x], pl = pl_c, mu_s2 = mu_s2_c, n = sample_size, n_init = fit_c$n)
   })
   # According to the use case replace multinom_sample by multinom_expectation
   y <- multinom_expectation(prepost_pl_nc = res_prepost_nc,
