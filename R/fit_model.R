@@ -84,7 +84,7 @@ integrated_likelihood <- function(stan_fit, seed = NULL, ...) {
     set.seed(seed = seed)
   }
 
-  bridgesampling::bridge_sampler(fit, silent = TRUE, ...)$logml
+  bridgesampling::bridge_sampler(fit, silent = TRUE, ... = ...)$logml
 
 }
 
@@ -203,7 +203,7 @@ posterior_analysis <- function(parameters, m_max, ...) {
   }
 
   for(i in m_grid){
-    fit <- fit_model(parameters, i)
+    fit <- fit_model(parameters, i, ... = ...)
     diagnostic[[i+1]] <- fit$diagnostic
     il[i+1] <- integrated_likelihood(fit)
     pl[[i+1]] <- posterior_pl(fit)
