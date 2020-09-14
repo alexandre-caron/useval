@@ -8,9 +8,11 @@ using namespace Rcpp;
 
 
 RcppExport SEXP _rcpp_module_boot_stan_fit4mu_s2_mod();
+RcppExport SEXP _rcpp_module_boot_stan_fit4p_mod();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_stan_fit4mu_s2_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4mu_s2_mod, 0},
+    {"_rcpp_module_boot_stan_fit4p_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4p_mod, 0},
     {NULL, NULL, 0}
 };
 

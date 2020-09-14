@@ -25,6 +25,7 @@ marginal likelihood via bridge sampling.
 Other fitting functions: 
 \code{\link{fit_model}()},
 \code{\link{posterior_analysis}()},
+\code{\link{posterior_mu_s2}()},
 \code{\link{posterior_pl}()}
 }
 \concept{fitting functions}

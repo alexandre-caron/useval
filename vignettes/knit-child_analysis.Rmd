@@ -14,7 +14,7 @@ vignette: >
 #   echo = FALSE, 
 #   out.width = "100%"
 # )
-knitr::opts_chunk$set(cache = TRUE, eval = FALSE)
+knitr::opts_chunk$set(cache = FALSE, eval = FALSE)
 ```
 
 ```{r}
@@ -28,7 +28,7 @@ set.seed(1984)
 ```{r}
 m_nc_max <- 50
 m_c_max <- 5
-dm <- naive_hf
+# dm <- naive_hf
 (dm_nc <- model_parameters(dm))
 dm0 <- ifelse(dm, FALSE, dm)
 (dm_c <- model_parameters(dm0))

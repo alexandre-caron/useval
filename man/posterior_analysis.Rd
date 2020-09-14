@@ -38,6 +38,7 @@ diagnostic}{computed by \code{fit_model}}}
 Other fitting functions: 
 \code{\link{fit_model}()},
 \code{\link{integrated_likelihood}()},
+\code{\link{posterior_mu_s2}()},
 \code{\link{posterior_pl}()}
 }
 \concept{fitting functions}

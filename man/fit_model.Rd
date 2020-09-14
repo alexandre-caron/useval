@@ -35,6 +35,7 @@ gamma distribution with shape \code{s2_prior_a} and scale
 Other fitting functions: 
 \code{\link{integrated_likelihood}()},
 \code{\link{posterior_analysis}()},
+\code{\link{posterior_mu_s2}()},
 \code{\link{posterior_pl}()}
 }
 \concept{fitting functions}
