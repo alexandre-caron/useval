@@ -27,44 +27,21 @@ sample_pm <- function(joint_pm, size) {
 #' @export
 #'
 
-rstan_p <- function(nb_sample, n, mu, s2){
-  fit = rstan::sampling(object = stanmodels$p, chains = 1,
-                        data = list(n=n, mu=mu, s2=s2), refresh = 0,
-                        iter = max(nb_sample + 1000, 2000),
-                        warmup = 1000)
-  logitinv(sample(fit@sim$samples[[1]]$logit_p[1001:max(nb_sample + 1000, 2000)],
-                  nb_sample))
+rstan_p <- function(nb_sample, n, mu, s2, ...){
+  fit = rstan::sampling(object = stanmodels$p, 
+                        data = list(n=n, mu=mu, s2=s2), refresh = 0, ... = ...)
+   
+  sample_size <- (fit@sim$warmup+1):fit@sim$iter
+
+  if(length(sample_size)<nb_sample){
+      logitinv(sample(fit@sim$samples[[1]]$logit_p[sample_size],
+                  nb_sample, replace = TRUE))
+  }else{
+      logitinv(sample(fit@sim$samples[[1]]$logit_p[sample_size],
+                  nb_sample, replace = FALSE))
+  }
 }
 
-
-#' @title TO DO sample_posterior_pl
-#'
-#' @description TO DO sample_posterior_pl
-#'
-#' @param nb_sample TO DO
-#' @param n TO DO
-#' @param mu TO DO
-#' @param s2 TO DO
-#' @param metropolis TO DO
-#'
-#' @return
-#' @export sample_posterior_pl
-#'
-
-sample_posterior_pl <- function(nb_sample, n, mu,s2, sampler = "rstan"){
-  switch (sampler,
-    armspp = {
-      thin = 100
-      temp = armspp::arms(thin*nb_sample, log_pdf, lower = 0, upper = 1,
-                          arguments = list(n = n, mu  = mu, s2= s2),
-                          metropolis = TRUE)
-      temp[thin*(1:nb_sample)]
-    },
-    rstan = {
-      rstan_p(nb_sample, n, mu, s2)
-    }
-  )
-}
 
 
 #' @title TO DO prepost_pl
@@ -73,6 +50,7 @@ sample_posterior_pl <- function(nb_sample, n, mu,s2, sampler = "rstan"){
 #'
 #' @param m a vector
 #' @param pl a list
+#' @param mu_s2 TO DO
 #' @param n a vector
 #' @param seed a number for the seed, default = NULL
 #'
@@ -80,7 +58,7 @@ sample_posterior_pl <- function(nb_sample, n, mu,s2, sampler = "rstan"){
 #' @export prepost_pl
 #'
 
-prepost_pl <- function(m, pl, mu_s2, n, n_init, seed = NULL) {
+prepost_pl <- function(m, pl, mu_s2, n, n_init, seed = NULL, ...) {
   if(!is.null(seed)) set.seed(seed)
   sapply(m, function(x){
     pl_m <- pl[[m+1]]
@@ -97,9 +75,10 @@ prepost_pl <- function(m, pl, mu_s2, n, n_init, seed = NULL) {
 
     pl_m_post_undiscovered = lapply(1:length(n), function(k) {
         if (nb_undiscovered[[k]]>0) {
-          sample_posterior_pl(nb_sample = nb_undiscovered[[k]], n = n[k] + n_init,
+          rstan_p(nb_sample = nb_undiscovered[[k]], n = n[k] + n_init,
                               mu = mu_s2_sample[1],
-                              s2 = mu_s2_sample[2])
+                              s2 = mu_s2_sample[2], 
+                  ...=...)
         } else {
           0
         }
@@ -173,7 +152,7 @@ multinom_expectation <- function(prepost_pl_nc, prepost_pl_c, N){
 #' @export prepost_analysis
 #'
 
-prepost_analysis <- function(fit_nc, fit_c, sample_size, n_end_users, sim){
+prepost_analysis <- function(fit_nc, fit_c, sample_size, n_end_users, size, ...){
   pm <- joint_pm(pd_nc = fit_nc$integrated_likelihood,
                  pd_c = fit_c$integrated_likelihood)
   j_nc <- min(pm[pm$px_nc>-Inf,"m_nc"])
@@ -182,12 +161,12 @@ prepost_analysis <- function(fit_nc, fit_c, sample_size, n_end_users, sim){
   mu_s2_nc <- fit_nc$posterior_mu_s2
   pl_c <- short_pl(posterior_pl = fit_c$posterior_pl, j = dm_c$j)
   mu_s2_c <- fit_c$posterior_mu_s2
-  s_pm <- sample_pm(pm, sim)
+  s_pm <- sample_pm(pm, size = size)
   res_prepost_nc <- sapply(1:length(s_pm$m_nc), function(x){
-    prepost_pl(m = s_pm$m_nc[x], pl = pl_nc, mu_s2 = mu_s2_nc, n = sample_size, n_init = fit_nc$n)
+    prepost_pl(m = s_pm$m_nc[x], pl = pl_nc, mu_s2 = mu_s2_nc, n = sample_size, n_init = fit_nc$n, ...=...)
   })
   res_prepost_c <- sapply(1:length(s_pm$m_c), function(x){
-    prepost_pl(m = s_pm$m_c[x], pl = pl_c, mu_s2 = mu_s2_c, n = sample_size, n_init = fit_c$n)
+    prepost_pl(m = s_pm$m_c[x], pl = pl_c, mu_s2 = mu_s2_c, n = sample_size, n_init = fit_c$n, ...=...)
   })
   # According to the use case replace multinom_sample by multinom_expectation
   y <- multinom_expectation(prepost_pl_nc = res_prepost_nc,
