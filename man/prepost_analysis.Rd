@@ -4,7 +4,7 @@
 \alias{prepost_analysis}
 \title{TO DO prepost_analysis}
 \usage{
-prepost_analysis(fit_nc, fit_c, sample_size, n_end_users, sim)
+prepost_analysis(fit_nc, fit_c, sample_size, n_end_users, size, ...)
 }
 \arguments{
 \item{fit_nc}{TO DO}

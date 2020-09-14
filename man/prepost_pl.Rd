@@ -4,12 +4,14 @@
 \alias{prepost_pl}
 \title{TO DO prepost_pl}
 \usage{
-prepost_pl(m, pl, mu_s2, n, n_init, seed = NULL)
+prepost_pl(m, pl, mu_s2, n, n_init, seed = NULL, ...)
 }
 \arguments{
 \item{m}{a vector}
 
 \item{pl}{a list}
+
+\item{mu_s2}{TO DO}
 
 \item{n}{a vector}
 
