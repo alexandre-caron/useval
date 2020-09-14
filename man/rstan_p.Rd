@@ -4,7 +4,7 @@
 \alias{rstan_p}
 \title{Title TO DO}
 \usage{
-rstan_p(nb_sample, n, mu, s2)
+rstan_p(nb_sample, n, mu, s2, ...)
 }
 \arguments{
 \item{n}{TO DO}
