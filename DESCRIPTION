@@ -3,20 +3,20 @@ Title: Number of problem estimation and optimal sample size determination for
     usability testing
 Version: 0.0.1
 Authors@R: 
-    person(given = "Alexandre",
+    c(person(given = "Alexandre",
            family = "Caron",
            role = c("aut", "cre"),
            email = "alexandre.caron-chavanet@outlook.com",
-           comment = c(ORCID = "0000-0002-9872-0633"))
+           comment = c(ORCID = "0000-0002-9872-0633")),
     person(given = "Vincent",
            family = "Vandewalle",
-           role = c("aut", "cre"),
+           role = c("aut"),
            email = "vincent.vandewalle@univ-lille.fr",
-           comment = c(ORCID = "0000-0003-2946-9059"))
+           comment = c(ORCID = "0000-0003-2946-9059")),
     person(given = "Adam",
            family = "Guerroumi",
            role = c("ctb"),
-           email = "adam.guerroumi.etu@univ-lille.fr")
+           email = "adam.guerroumi.etu@univ-lille.fr"))
 Description: The package permits based on a discovery matrix (binary matrix of 
     zeros and ones), to perform an estimation of the number of problems from 
     a Bayesian perspective. In the framework of Value Of Information (VOI), it 

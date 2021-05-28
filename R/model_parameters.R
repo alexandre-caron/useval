@@ -1,5 +1,3 @@
-
-
 #' @title List of parameters for fitting the matrix-based model
 #'
 #' @description \code{discovery_parameters} returns a list of parameters used by
