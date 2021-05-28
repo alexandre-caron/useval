@@ -1,15 +1,29 @@
 Package: useval
-Title: Perform usability analysis
-Version: 0.0.0.9000
+Title: Number of problem estimation and optimal sample size determination for 
+    usability testing
+Version: 0.0.1
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Alexandre",
+           family = "Caron",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+           email = "alexandre.caron-chavanet@outlook.com",
+           comment = c(ORCID = "0000-0002-9872-0633"))
+    person(given = "Vincent",
+           family = "Vandewalle",
+           role = c("aut", "cre"),
+           email = "vincent.vandewalle@univ-lille.fr",
+           comment = c(ORCID = "0000-0003-2946-9059"))
+    person(given = "Adam",
+           family = "Guerroumi",
+           role = c("ctb"),
+           email = "adam.guerroumi.etu@univ-lille.fr")
+Description: The package permits based on a discovery matrix (binary matrix of 
+    zeros and ones), to perform an estimation of the number of problems from 
+    a Bayesian perspective. In the framework of Value Of Information (VOI), it 
+    also allows to assess the economic consequences of undiscovered problems, 
+    and to propose an optimal sample size for an additionnal usability test in 
+    order to limit the economic consequenes.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
