@@ -28,9 +28,9 @@ sample_pm <- function(joint_pm, size) {
 #'
 
 rstan_p <- function(nb_sample, n, mu, s2, ...){
-  fit = rstan::sampling(object = stanmodels$p, 
+  fit = rstan::sampling(object = stanmodels$p,
                         data = list(n=n, mu=mu, s2=s2), refresh = 0, ... = ...)
-   
+
   sample_size <- (fit@sim$warmup+1):fit@sim$iter
 
   if(length(sample_size)<nb_sample){
@@ -77,7 +77,7 @@ prepost_pl <- function(m, pl, mu_s2, n, n_init, seed = NULL, ...) {
         if (nb_undiscovered[[k]]>0) {
           rstan_p(nb_sample = nb_undiscovered[[k]], n = n[k] + n_init,
                               mu = mu_s2_sample[1],
-                              s2 = mu_s2_sample[2], 
+                              s2 = mu_s2_sample[2],
                   ...=...)
         } else {
           0
@@ -157,9 +157,9 @@ prepost_analysis <- function(fit_nc, fit_c, sample_size, n_end_users, size, ...)
                  pd_c = fit_c$integrated_likelihood)
   j_nc <- min(pm[pm$px_nc>-Inf,"m_nc"])
   j_c <- min(pm[pm$px_nc>-Inf,"m_c"])
-  pl_nc <- short_pl(posterior_pl = fit_nc$posterior_pl, j = dm_nc$j)
+  pl_nc <- short_pl(posterior_pl = fit_nc$posterior_pl, j = j_nc)
   mu_s2_nc <- fit_nc$posterior_mu_s2
-  pl_c <- short_pl(posterior_pl = fit_c$posterior_pl, j = dm_c$j)
+  pl_c <- short_pl(posterior_pl = fit_c$posterior_pl, j = j_c)
   mu_s2_c <- fit_c$posterior_mu_s2
   s_pm <- sample_pm(pm, size = size)
   res_prepost_nc <- sapply(1:length(s_pm$m_nc), function(x){
