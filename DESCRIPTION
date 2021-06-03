@@ -11,6 +11,8 @@ Authors@R:
     person(given = "Vincent",
            family = "Vandewalle",
            role = c("aut"),
+           email = "vincent.vandewalle@univ-lille.fr",
+           comment = c(ORCID = "0000-0003-2946-9059")),
     person(given = "Benoit",
            family = "Dervaux",
            role = c("aut"),
