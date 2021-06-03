@@ -8,7 +8,6 @@
 #' @useDynLib useval, .registration = TRUE
 #' @import methods
 #' @import Rcpp
-#' @import armspp
 #' @importFrom rstan sampling
 #' @importFrom bridgesampling bridge_sampler
 #'
