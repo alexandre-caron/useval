@@ -6,10 +6,8 @@
 #' @param px TO DO
 #' @param ... TO DO
 #'
-#' @return
+#' @return TO DO
 #' @export px_to_pd
-#'
-#' @examples
 #'
 
 px_to_pd <- function(px, ...) {
@@ -31,11 +29,11 @@ px_to_pd <- function(px, ...) {
 #' @param pd_nc TO DO
 #' @param pd_c TO DO
 #'
-#' @return
+#' @return The cross-table containing the posterior for each number of clusters
+#' for the critical and non-critical problems.
 #' @export joint_pm
 #'
-#' @examples
-#'
+
 
 joint_pm <- function(pd_nc, pd_c){
   px_nc <- px_to_pd(pd_nc)

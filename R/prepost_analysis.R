@@ -6,7 +6,7 @@
 #' @param joint_pm TO DO
 #' @param size TO DO
 #'
-#' @return
+#' @return TO DO
 #' @export sample_pm
 #'
 
@@ -19,9 +19,12 @@ sample_pm <- function(joint_pm, size) {
 
 #' Title TO DO
 #'
+#' @param nb_sample TO DO
 #' @param n TO DO
 #' @param mu TO DO
 #' @param s2 TO DO
+#' @param ... Parameters related to optimal parameters of rstan sampling
+#' function
 #'
 #' @return TO DO
 #' @export
@@ -52,9 +55,11 @@ rstan_p <- function(nb_sample, n, mu, s2, ...){
 #' @param pl a list
 #' @param mu_s2 TO DO
 #' @param n a vector
+#' @param n_init TO DO
 #' @param seed a number for the seed, default = NULL
+#' @param ... optional parameters related to rstan_p function
 #'
-#' @return
+#' @return TO DO
 #' @export prepost_pl
 #'
 
@@ -97,7 +102,8 @@ prepost_pl <- function(m, pl, mu_s2, n, n_init, seed = NULL, ...) {
 #' @param prepost_pl_c TO DO
 #' @param N TO DO
 #'
-#' @return
+#' @return Return the number of newly discovered problems by using the posterior
+#' distribution
 #' @export multinom_sample
 #'
 
@@ -123,7 +129,7 @@ multinom_sample <- function(prepost_pl_nc, prepost_pl_c, N){
 #' @param prepost_pl_c TO DO
 #' @param N TO DO
 #'
-#' @return
+#' @return Returns the expected number of problems
 #' @export multinom_sample
 #'
 
@@ -146,9 +152,10 @@ multinom_expectation <- function(prepost_pl_nc, prepost_pl_c, N){
 #' @param fit_c TO DO
 #' @param sample_size TO DO
 #' @param n_end_users TO DO
-#' @param sim TO DO
+#' @param size TO DO
+#' @param ... optinal parameters related to prepost_pl function
 #'
-#' @return
+#' @return TO DO
 #' @export prepost_analysis
 #'
 

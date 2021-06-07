@@ -178,13 +178,11 @@ posterior_mu_s2 <- function(stan_fit) {
 #' @param m_max An integer scalar >= to the number of column in \code{d}.
 #' @param ... Other arguments passed on to `rstan::sampling` (e.g. iter, chains,
 #'   etc.).#'
-#' @return
+#' @return TO DO
 #'
 #' @family fitting functions
 #'
 #' @export posterior_analysis
-#'
-#' @examples
 #'
 
 posterior_analysis <- function(parameters, m_max, ...) {

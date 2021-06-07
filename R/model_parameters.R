@@ -18,8 +18,6 @@
 #'
 #' @return A list of parameters to be passed to fitting functions.
 #'
-#' @examples
-#'
 #' @export model_parameters
 #'
 
