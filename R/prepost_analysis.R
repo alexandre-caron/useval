@@ -152,7 +152,7 @@ multinom_expectation <- function(prepost_pl_nc, prepost_pl_c, N){
 #' @param fit_c TO DO
 #' @param sample_size TO DO
 #' @param n_end_users TO DO
-#' @param size TO DO
+#' @param size Number of simulations to perform
 #' @param ... optinal parameters related to prepost_pl function
 #'
 #' @return TO DO

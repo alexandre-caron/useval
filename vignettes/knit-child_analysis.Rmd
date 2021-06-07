@@ -28,7 +28,7 @@ set.seed(1984)
 ```{r}
 m_nc_max <- 50
 m_c_max <- 5
-# dm <- naive_hf
+dm <- naive_hf
 (dm_nc <- model_parameters(dm))
 dm0 <- ifelse(dm, FALSE, dm)
 (dm_c <- model_parameters(dm0))
@@ -168,7 +168,7 @@ ggpubr::ggarrange(p[[1]], ggplot()+theme_minimal(), p[[2]], p[[3]],
 ```{r}
 res_prepost <- prepost_analysis(fit_nc = fit_nc, fit_c = fit_c, 
                                 n_end_users = pop_size_sell, 
-                                sample_size = sample_size_grid, sim = n_sim)
+                                sample_size = sample_size_grid, size = n_sim)
 
 ```
 
