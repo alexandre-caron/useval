@@ -208,10 +208,16 @@ posterior_analysis <- function(parameters, m_max, ...) {
     mu_s2[[i+1]] <- posterior_mu_s2(fit)
   }
 
+  lnpd = px_to_pd(il)
+  exp_lnpd = exp(lnpd - max(lnpd))
+  proba = exp_lnpd/sum(exp_lnpd)
+  names(proba) = 0:m_max
+
   list(integrated_likelihood = il,
        posterior_pl = pl,
        posterior_mu_s2 = mu_s2,
        diagnostic = do.call(rbind, diagnostic),
-       n = parameters$n)
+       n = parameters$n,
+       posterior_m = proba)
 
 }
